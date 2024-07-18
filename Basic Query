@@ -1,3 +1,6 @@
+SELECT*
+from `portfolio-data-analyst-429804.Test1.vehicle`
+
 # Select Top 10 state which have high number of Electric Vehicle
 select
 state,
@@ -7,27 +10,81 @@ group by 1
 order by 2 desc
 limit 10
 
-# Select Top 10 city which have high number of Electric Vehicle
+# Select Top 5 city which have high number of Electric Vehicle > 2500 units
+with top_city as
+(
+select 
+city,
+no_vehicle
+from
+(
 select
 city,
 count(distinct (unique_value)) as no_vehicle
 from `portfolio-data-analyst-429804.Test1.vehicle`
 group by 1
 order by 2 desc
-limit 10
+)
+where
+no_vehicle > 2500
+limit 5
+)
 
-# Select Top model_year of electric cars are used
-SELECT
-model_year,
-count(distinct (unique_value)) as no_vehicle
-from `portfolio-data-analyst-429804.Test1.vehicle`
-group by 1
-order by 2 desc
-
-# Select Top 10 Brand of electric cars are used
+# Select Top 5 Brand that have model more than 5 types and model year setelah 2020
+with main_table as
+(
 SELECT
 make,
+count(distinct (model)) as type_vehicle
+from `portfolio-data-analyst-429804.Test1.vehicle`
+where 
+model_year >= 2022 
+group by 1
+order by 2 desc
+)
+select
+make as brand,
+type_vehicle
+from main_table
+where
+type_vehicle >= 5
+limit 5
+
+# Compare last 6 Years units sold of Top 5 Brand in Top 5 city 
+with top_city as
+(
+select
+city,
 count(distinct (unique_value)) as no_vehicle
 from `portfolio-data-analyst-429804.Test1.vehicle`
 group by 1
 order by 2 desc
+limit 5
+), 
+top_brand as 
+(
+select 
+make as brand,
+count(distinct (unique_value)) as no_vehicle
+from `portfolio-data-analyst-429804.Test1.vehicle`
+group by 1
+order by 2 desc
+limit 5
+)
+select
+city,
+make as brand,
+count(distinct case when model_year = 2025 then unique_value end) as qty_vehicle_2025,
+count(distinct case when model_year = 2024 then unique_value end) as qty_vehicle_2024,
+count(distinct case when model_year = 2023 then unique_value end) as qty_vehicle_2023,
+count(distinct case when model_year = 2022 then unique_value end) as qty_vehicle_2022,
+count(distinct case when model_year = 2021 then unique_value end) as qty_vehicle_2021,
+count(distinct case when model_year = 2020 then unique_value end) as qty_vehicle_2020,
+count(distinct unique_value) as total_qty
+from `portfolio-data-analyst-429804.Test1.vehicle`
+where
+city in (select city from top_city)
+and
+make in (select brand from top_brand)
+group by 1,2
+order by 9 desc
