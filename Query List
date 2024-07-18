@@ -1,0 +1,19 @@
+# Select Top 10 state which have high number of Electric Vehicle
+select
+state,
+count(distinct (unique_value)) as no_vehicle
+from `portfolio-data-analyst-429804.Test1.vehicle`
+group by 1
+order by 2 desc
+limit 10
+
+# Select Top 10 city which have high number of Electric Vehicle
+select
+city,
+count(distinct (unique_value)) as no_vehicle
+from `portfolio-data-analyst-429804.Test1.vehicle`
+group by 1
+order by 2 desc
+limit 10
+
+# 
