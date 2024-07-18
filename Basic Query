@@ -16,4 +16,18 @@ group by 1
 order by 2 desc
 limit 10
 
-# 
+# Select Top model_year of electric cars are used
+SELECT
+model_year,
+count(distinct (unique_value)) as no_vehicle
+from `portfolio-data-analyst-429804.Test1.vehicle`
+group by 1
+order by 2 desc
+
+# Select Top 10 Brand of electric cars are used
+SELECT
+make,
+count(distinct (unique_value)) as no_vehicle
+from `portfolio-data-analyst-429804.Test1.vehicle`
+group by 1
+order by 2 desc
